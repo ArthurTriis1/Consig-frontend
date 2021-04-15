@@ -7,6 +7,7 @@ import { Permission, Security } from 'enums/security'
 import { getSigDataCookie } from 'utils/getSigDataCookie'
 import { SigBasicInfo } from 'types/SigTypes'
 import { Text } from './styles'
+import Link from 'next/link'
 
 type SigIndexParams = {
   sigSlug: string
@@ -28,6 +29,9 @@ const SigIndex = ({ sigSlug, sigData }: SigIndexParams) => {
     <>
       <Text>{JSON.stringify(data)}</Text>
       <h1>SigIndex: {sigSlug}</h1>
+      <Link href={`/${sigSlug}/map`}>
+        <a>Mapa</a>
+      </Link>
     </>
   )
 }
@@ -42,7 +46,7 @@ export const getServerSideProps = async (
   const session = await protectedRoutes(
     ctx,
     sigData?.data?.security as Security,
-    Permission.EDIT
+    Permission.VIEW
   )
 
   if (!session) return {}

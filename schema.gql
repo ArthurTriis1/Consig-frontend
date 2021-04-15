@@ -74,13 +74,129 @@ type UserPermissionsPasswordPayload {
   ok: Boolean!
 }
 
+type GeoJsonLayer {
+  id: ID!
+  created_at: DateTime!
+  updated_at: DateTime!
+  name: String
+  slug: String
+  GeoJSON: JSON
+  published_at: DateTime
+}
+
+type GeoJsonLayerConnection {
+  values: [GeoJsonLayer]
+  groupBy: GeoJsonLayerGroupBy
+  aggregate: GeoJsonLayerAggregator
+}
+
+type GeoJsonLayerAggregator {
+  count: Int
+  totalCount: Int
+}
+
+type GeoJsonLayerGroupBy {
+  id: [GeoJsonLayerConnectionId]
+  created_at: [GeoJsonLayerConnectionCreated_at]
+  updated_at: [GeoJsonLayerConnectionUpdated_at]
+  name: [GeoJsonLayerConnectionName]
+  slug: [GeoJsonLayerConnectionSlug]
+  GeoJSON: [GeoJsonLayerConnectionGeoJSON]
+  published_at: [GeoJsonLayerConnectionPublished_at]
+}
+
+type GeoJsonLayerConnectionId {
+  key: ID
+  connection: GeoJsonLayerConnection
+}
+
+type GeoJsonLayerConnectionCreated_at {
+  key: DateTime
+  connection: GeoJsonLayerConnection
+}
+
+type GeoJsonLayerConnectionUpdated_at {
+  key: DateTime
+  connection: GeoJsonLayerConnection
+}
+
+type GeoJsonLayerConnectionName {
+  key: String
+  connection: GeoJsonLayerConnection
+}
+
+type GeoJsonLayerConnectionSlug {
+  key: String
+  connection: GeoJsonLayerConnection
+}
+
+type GeoJsonLayerConnectionGeoJSON {
+  key: JSON
+  connection: GeoJsonLayerConnection
+}
+
+type GeoJsonLayerConnectionPublished_at {
+  key: DateTime
+  connection: GeoJsonLayerConnection
+}
+
+input GeoJsonLayerInput {
+  name: String
+  slug: String
+  GeoJSON: JSON
+  published_at: DateTime
+  created_by: ID
+  updated_by: ID
+}
+
+input editGeoJsonLayerInput {
+  name: String
+  slug: String
+  GeoJSON: JSON
+  published_at: DateTime
+  created_by: ID
+  updated_by: ID
+}
+
+input createGeoJsonLayerInput {
+  data: GeoJsonLayerInput
+}
+
+type createGeoJsonLayerPayload {
+  geoJsonLayer: GeoJsonLayer
+}
+
+input updateGeoJsonLayerInput {
+  where: InputID
+  data: editGeoJsonLayerInput
+}
+
+type updateGeoJsonLayerPayload {
+  geoJsonLayer: GeoJsonLayer
+}
+
+input deleteGeoJsonLayerInput {
+  where: InputID
+}
+
+type deleteGeoJsonLayerPayload {
+  geoJsonLayer: GeoJsonLayer
+}
+
+enum ENUM_SIG_SECURITY {
+  public
+  private
+}
+
 type Sig {
   id: ID!
   created_at: DateTime!
   updated_at: DateTime!
   name: String!
   slug: String
-  content: JSON
+  security: ENUM_SIG_SECURITY
+  theme: ComponentSigTheme
+  Layers: ComponentSigLayers
   published_at: DateTime
   usersCanEdit(sort: String, limit: Int, start: Int, where: JSON): [UsersPermissionsUser!]!
   usersCanView(sort: String, limit: Int, start: Int, where: JSON): [UsersPermissionsUser!]!
@@ -103,7 +219,9 @@ type SigGroupBy {
   updated_at: [SigConnectionUpdated_at]
   name: [SigConnectionName]
   slug: [SigConnectionSlug]
-  content: [SigConnectionContent]
+  security: [SigConnectionSecurity]
+  theme: [SigConnectionTheme]
+  Layers: [SigConnectionLayers]
   published_at: [SigConnectionPublished_at]
 }
 
@@ -132,8 +250,18 @@ type SigConnectionSlug {
   connection: SigConnection
 }
 
-type SigConnectionContent {
-  key: JSON
+type SigConnectionSecurity {
+  key: String
+  connection: SigConnection
+}
+
+type SigConnectionTheme {
+  key: ID
+  connection: SigConnection
+}
+
+type SigConnectionLayers {
+  key: ID
   connection: SigConnection
 }
 
@@ -147,7 +275,9 @@ input SigInput {
   slug: String
   usersCanEdit: [ID]
   usersCanView: [ID]
-  content: JSON
+  security: ENUM_SIG_SECURITY
+  theme: ComponentSigThemeInput
+  Layers: ComponentSigLayerInput
   published_at: DateTime
   created_by: ID
   updated_by: ID
@@ -158,7 +288,9 @@ input editSigInput {
   slug: String
   usersCanEdit: [ID]
   usersCanView: [ID]
-  content: JSON
+  security: ENUM_SIG_SECURITY
+  theme: editComponentSigThemeInput
+  Layers: editComponentSigLayerInput
   published_at: DateTime
   created_by: ID
   updated_by: ID
@@ -643,7 +775,38 @@ type deleteUserPayload {
   user: UsersPermissionsUser
 }
 
-union Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | Sig | SigConnection | SigAggregator | SigGroupBy | SigConnectionId | SigConnectionCreated_at | SigConnectionUpdated_at | SigConnectionName | SigConnectionSlug | SigConnectionContent | SigConnectionPublished_at | createSigPayload | updateSigPayload | deleteSigPayload | UploadFile | UploadFileConnection | UploadFileAggregator | UploadFileAggregatorSum | UploadFileAggregatorAvg | UploadFileAggregatorMin | UploadFileAggregatorMax | UploadFileGroupBy | UploadFileConnectionId | UploadFileConnectionCreated_at | UploadFileConnectionUpdated_at | UploadFileConnectionName | UploadFileConnectionAlternativeText | UploadFileConnectionCaption | UploadFileConnectionWidth | UploadFileConnectionHeight | UploadFileConnectionFormats | UploadFileConnectionHash | UploadFileConnectionExt | UploadFileConnectionMime | UploadFileConnectionSize | UploadFileConnectionUrl | UploadFileConnectionPreviewUrl | UploadFileConnectionProvider | UploadFileConnectionProvider_metadata | deleteFilePayload | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsRoleConnection | UsersPermissionsRoleAggregator | UsersPermissionsRoleGroupBy | UsersPermissionsRoleConnectionId | UsersPermissionsRoleConnectionName | UsersPermissionsRoleConnectionDescription | UsersPermissionsRoleConnectionType | createRolePayload | updateRolePayload | deleteRolePayload | UsersPermissionsUser | UsersPermissionsUserConnection | UsersPermissionsUserAggregator | UsersPermissionsUserGroupBy | UsersPermissionsUserConnectionId | UsersPermissionsUserConnectionCreated_at | UsersPermissionsUserConnectionUpdated_at | UsersPermissionsUserConnectionUsername | UsersPermissionsUserConnectionEmail | UsersPermissionsUserConnectionProvider | UsersPermissionsUserConnectionConfirmed | UsersPermissionsUserConnectionBlocked | UsersPermissionsUserConnectionRole | createUserPayload | updateUserPayload | deleteUserPayload
+type ComponentSigLayers {
+  id: ID!
+  geo_json_layers(sort: String, limit: Int, start: Int, where: JSON): [GeoJsonLayer!]!
+}
+
+input ComponentSigLayerInput {
+  geo_json_layers: [ID]
+}
+
+input editComponentSigLayerInput {
+  id: ID
+  geo_json_layers: [ID]
+}
+
+type ComponentSigTheme {
+  id: ID!
+  primary: String
+  secondary: String
+}
+
+input ComponentSigThemeInput {
+  primary: String
+  secondary: String
+}
+
+input editComponentSigThemeInput {
+  id: ID
+  primary: String
+  secondary: String
+}
+
+union Morph = UsersPermissionsMe | UsersPermissionsMeRole | UsersPermissionsLoginPayload | UserPermissionsPasswordPayload | GeoJsonLayer | GeoJsonLayerConnection | GeoJsonLayerAggregator | GeoJsonLayerGroupBy | GeoJsonLayerConnectionId | GeoJsonLayerConnectionCreated_at | GeoJsonLayerConnectionUpdated_at | GeoJsonLayerConnectionName | GeoJsonLayerConnectionSlug | GeoJsonLayerConnectionGeoJSON | GeoJsonLayerConnectionPublished_at | createGeoJsonLayerPayload | updateGeoJsonLayerPayload | deleteGeoJsonLayerPayload | Sig | SigConnection | SigAggregator | SigGroupBy | SigConnectionId | SigConnectionCreated_at | SigConnectionUpdated_at | SigConnectionName | SigConnectionSlug | SigConnectionSecurity | SigConnectionTheme | SigConnectionLayers | SigConnectionPublished_at | createSigPayload | updateSigPayload | deleteSigPayload | UploadFile | UploadFileConnection | UploadFileAggregator | UploadFileAggregatorSum | UploadFileAggregatorAvg | UploadFileAggregatorMin | UploadFileAggregatorMax | UploadFileGroupBy | UploadFileConnectionId | UploadFileConnectionCreated_at | UploadFileConnectionUpdated_at | UploadFileConnectionName | UploadFileConnectionAlternativeText | UploadFileConnectionCaption | UploadFileConnectionWidth | UploadFileConnectionHeight | UploadFileConnectionFormats | UploadFileConnectionHash | UploadFileConnectionExt | UploadFileConnectionMime | UploadFileConnectionSize | UploadFileConnectionUrl | UploadFileConnectionPreviewUrl | UploadFileConnectionProvider | UploadFileConnectionProvider_metadata | deleteFilePayload | UsersPermissionsPermission | UsersPermissionsRole | UsersPermissionsRoleConnection | UsersPermissionsRoleAggregator | UsersPermissionsRoleGroupBy | UsersPermissionsRoleConnectionId | UsersPermissionsRoleConnectionName | UsersPermissionsRoleConnectionDescription | UsersPermissionsRoleConnectionType | createRolePayload | updateRolePayload | deleteRolePayload | UsersPermissionsUser | UsersPermissionsUserConnection | UsersPermissionsUserAggregator | UsersPermissionsUserGroupBy | UsersPermissionsUserConnectionId | UsersPermissionsUserConnectionCreated_at | UsersPermissionsUserConnectionUpdated_at | UsersPermissionsUserConnectionUsername | UsersPermissionsUserConnectionEmail | UsersPermissionsUserConnectionProvider | UsersPermissionsUserConnectionConfirmed | UsersPermissionsUserConnectionBlocked | UsersPermissionsUserConnectionRole | createUserPayload | updateUserPayload | deleteUserPayload | ComponentSigLayers | ComponentSigTheme
 
 input InputID {
   id: ID!
@@ -662,6 +825,9 @@ type AdminUser {
 }
 
 type Query {
+  geoJsonLayer(id: ID!, publicationState: PublicationState): GeoJsonLayer
+  geoJsonLayers(sort: String, limit: Int, start: Int, where: JSON, publicationState: PublicationState): [GeoJsonLayer!]!
+  geoJsonLayersConnection(sort: String, limit: Int, start: Int, where: JSON): GeoJsonLayerConnection
   sig(id: ID!, publicationState: PublicationState): Sig
   sigs(sort: String, limit: Int, start: Int, where: JSON, publicationState: PublicationState): [Sig!]!
   sigsConnection(sort: String, limit: Int, start: Int, where: JSON): SigConnection
@@ -674,10 +840,14 @@ type Query {
   user(id: ID!, publicationState: PublicationState): UsersPermissionsUser
   users(sort: String, limit: Int, start: Int, where: JSON, publicationState: PublicationState): [UsersPermissionsUser!]!
   usersConnection(sort: String, limit: Int, start: Int, where: JSON): UsersPermissionsUserConnection
+  sigBySlug(id: ID, slug: String): Sig
   me: UsersPermissionsMe
 }
 
 type Mutation {
+  createGeoJsonLayer(input: createGeoJsonLayerInput): createGeoJsonLayerPayload
+  updateGeoJsonLayer(input: updateGeoJsonLayerInput): updateGeoJsonLayerPayload
+  deleteGeoJsonLayer(input: deleteGeoJsonLayerInput): deleteGeoJsonLayerPayload
   createSig(input: createSigInput): createSigPayload
   updateSig(input: updateSigInput): updateSigPayload
   deleteSig(input: deleteSigInput): deleteSigPayload
